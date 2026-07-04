@@ -1,0 +1,48 @@
+replicaCount: 3
+
+image:
+  # Override at deploy time with: --set image.repository=<account>.dkr.ecr.<region>.amazonaws.com/schoolapp
+  repository: "371590514646.dkr.ecr.us-east-1.amazonaws.com/schoolapp:latest"
+  tag: latest
+  pullPolicy: Always
+
+# ─── Service Account (IRSA) ───────────────────────────────────────────────────
+# Set irsaRoleArn at deploy time from terraform-infra output:
+#   --set serviceAccount.irsaRoleArn=<external_secrets_role_arn>
+serviceAccount:
+  irsaRoleArn: "arn:aws:iam::371590514646:role/external-secrets-role"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: true
+  className: nginx
+  host: schoolapp.example.com
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+
+config:
+  environment: Production
+
+# ─── External Secrets Operator ───────────────────────────────────────────────
+externalSecrets:
+  awsRegion: us-east-1
+  secretStoreName: aws-secret-store
+  secretName: schoolapp-rds-secret      # must match secrets-manager.tf: name = "schoolapp-rds-secret"
+  targetSecret: schoolapp-secret        # K8s Secret name ESO will create

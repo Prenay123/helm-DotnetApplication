@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: schoolapp-service
+  namespace: {{ .Release.Namespace }}
+
+spec:
+  selector:
+    app: dotnet
+
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+
+  type: {{ .Values.service.type }}
