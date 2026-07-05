@@ -2,7 +2,7 @@ replicaCount: 3
 
 image:
   # Override at deploy time with: --set image.repository=<account>.dkr.ecr.<region>.amazonaws.com/schoolapp
-  repository: "371590514646.dkr.ecr.us-east-1.amazonaws.com/schoolapp:latest"
+  repository: "371590514646.dkr.ecr.us-east-1.amazonaws.com/schoolapp"
   tag: latest
   pullPolicy: Always
 
@@ -29,7 +29,6 @@ resources:
 ingress:
   enabled: true
   className: nginx
-  host: schoolapp.example.com
 
 autoscaling:
   enabled: false
